@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 // const User = require("./models/user");
 // const validator = require("validator")
-const Joi = require('joi');
-const{validationResult}= require('express-validator')
-const { body } = require('express-validator');
+const Joi = require("joi");
+const { validationResult } = require("express-validator");
+const { body } = require("express-validator");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const encodeToken = require("../utils/encodeToken");
@@ -13,11 +13,11 @@ const bcrypt = require("bcrypt");
 
 const schema = Joi.object({
   username: Joi.string().min(3).max(30).lowercase().required(),
-  email: Joi.string().email({minDomainSegments:2,tlds:{allow:['com','net']}}).required(),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required(),
   password: Joi.string().min(6).max(15).required(),
-  
 });
-
 
 const signupuser = async (req, res) => {
   try {
@@ -33,7 +33,7 @@ const signupuser = async (req, res) => {
       password: req.body.password,
       role: req.body.role,
     };
-    
+
     const existingUser = await User.findOne({ name: data.name });
     if (existingUser) {
       res.send("User already exists.Please choose a different username");
@@ -55,6 +55,7 @@ const signupuser = async (req, res) => {
         };
         let token = await encodeToken.signupToken(payload);
         res.status(201).json({ message: "Register sucessfully" });
+        console.log("token----");
         console.log(token);
       }
       // res.send(token);
@@ -65,19 +66,17 @@ const signupuser = async (req, res) => {
   }
 };
 
-
-const Loginuser =  async (req, res) => {
-  
+const Loginuser = async (req, res) => {
   try {
     console.log("____________-------", req);
 
     const error = validationResult(req);
-    if(!error.isEmpty()){
-      return res.status(400).json({error:error.array()});
+    if (!error.isEmpty()) {
+      return res.status(400).json({ error: error.array() });
     }
 
     const { email, password, role } = req.body;
-  
+
     const existingUser = await User.findOne({ email: email });
     if (!existingUser) {
       return res.status(404).json({ message: "user not found" });
