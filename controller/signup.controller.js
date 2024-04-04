@@ -33,7 +33,7 @@ const signupuser = async (req, res) => {
       password: req.body.password,
       role: req.body.role,
     };
-
+     console.log("==>")
     const existingUser = await User.findOne({ name: data.name });
     if (existingUser) {
       res.send("User already exists.Please choose a different username");
@@ -57,6 +57,7 @@ const signupuser = async (req, res) => {
         res.status(201).json({ message: "Register sucessfully" });
         console.log("token----");
         console.log(token);
+        console.log("token")
       }
       // res.send(token);
     }
